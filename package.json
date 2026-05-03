@@ -1,0 +1,12 @@
+{
+  "name": "street-rentals",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Street Rentals: a free bike and scooter rental availability map powered by public GBFS feeds.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

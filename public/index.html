@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Street Rentals</title>
+    <link rel="preconnect" href="https://tile.openstreetmap.org" />
+    <link rel="preconnect" href="https://a.basemaps.cartocdn.com" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.6.1/ol.css" />
+    <link rel="stylesheet" href="/styles.css?v=street-rentals-1" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="map-pane" aria-label="Rental availability map">
+        <div class="search-bar">
+          <form id="searchForm" class="search-form">
+            <label for="locationInput">City or ZIP</label>
+            <input
+              id="locationInput"
+              name="location"
+              autocomplete="postal-code"
+              placeholder="New York, NY or 10003"
+              value="New York, NY"
+            />
+            <button type="submit">Search</button>
+          </form>
+          <button id="locateBtn" class="locate-button" type="button" title="Use my location" aria-label="Use my location">
+            Near me
+          </button>
+          <div class="radius-control">
+            <label for="radiusInput">Radius</label>
+            <input id="radiusInput" type="range" min="0.5" max="10" step="0.5" value="2" />
+            <output id="radiusOutput">2 mi</output>
+          </div>
+        </div>
+        <div id="map"></div>
+      </section>
+      <aside class="details-pane" aria-label="Rental details">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Open data availability</p>
+            <h1>Street Rentals</h1>
+          </div>
+          <button id="refreshBtn" class="icon-button" title="Refresh availability" aria-label="Refresh availability">
+            ↻
+          </button>
+        </div>
+        <div id="status" class="status">Search a city or ZIP to see rentals within 2 miles.</div>
+        <div class="summary-grid">
+          <div>
+            <span id="resultCount">0</span>
+            <small>places</small>
+          </div>
+          <div>
+            <span id="vehicleCount">0</span>
+            <small>available</small>
+          </div>
+          <div>
+            <span id="providerCount">0</span>
+            <small>providers</small>
+          </div>
+        </div>
+        <article id="selectedCard" class="selected-card empty">
+          <h2>Select a marker</h2>
+          <p>Details, current availability, pricing, app links, and service alerts appear here.</p>
+        </article>
+        <div class="list-header">
+          <h2>Nearby</h2>
+          <select id="filterSelect" aria-label="Filter results">
+            <option value="all">All rentals</option>
+            <option value="station">Stations only</option>
+            <option value="vehicle">Free-floating only</option>
+            <option value="available">Available now</option>
+          </select>
+        </div>
+        <div id="resultsList" class="results-list"></div>
+      </aside>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/ol@10.6.1/dist/ol.js"></script>
+    <script src="/app.js?v=street-rentals-1"></script>
+  </body>
+</html>
