@@ -2,7 +2,7 @@ const { Map, View } = ol;
 const { Tile: TileLayer, Vector: VectorLayer } = ol.layer;
 const { XYZ, Vector: VectorSource } = ol.source;
 const { Feature } = ol;
-const { Point, Circle: CircleGeometry } = ol.geom;
+const { Point, Polygon } = ol.geom;
 const { Style, Circle: CircleStyle, Fill, Stroke, Text } = ol.style;
 const { fromLonLat, toLonLat } = ol.proj;
 
@@ -293,9 +293,10 @@ async function searchByCoordinates(lat, lon) {
 function drawMap(data) {
   markerSource.clear();
   radiusSource.clear();
-  const center = fromLonLat([data.location.lon, data.location.lat]);
+  const centerLonLat = [data.location.lon, data.location.lat];
+  const center = fromLonLat(centerLonLat);
   const radiusMeters = data.radiusMiles * 1609.344;
-  const radiusFeature = new Feature(new CircleGeometry(center, radiusMeters));
+  const radiusFeature = new Feature(createGeodesicCircle(centerLonLat, radiusMeters));
   radiusSource.addFeature(radiusFeature);
 
   currentItems.forEach((item) => {
@@ -320,6 +321,38 @@ function drawMap(data) {
     });
   }
   refreshMap();
+}
+
+function createGeodesicCircle(centerLonLat, radiusMeters) {
+  const [lon, lat] = centerLonLat.map((value) => Number(value));
+  const earthRadius = 6371008.8;
+  const latRad = toRadians(lat);
+  const lonRad = toRadians(lon);
+  const angularDistance = radiusMeters / earthRadius;
+  const coordinates = [];
+
+  for (let bearingDegrees = 0; bearingDegrees <= 360; bearingDegrees += 3) {
+    const bearing = toRadians(bearingDegrees);
+    const pointLat = Math.asin(
+      Math.sin(latRad) * Math.cos(angularDistance) +
+        Math.cos(latRad) * Math.sin(angularDistance) * Math.cos(bearing)
+    );
+    const pointLon = lonRad + Math.atan2(
+      Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(latRad),
+      Math.cos(angularDistance) - Math.sin(latRad) * Math.sin(pointLat)
+    );
+    coordinates.push(fromLonLat([toDegrees(pointLon), toDegrees(pointLat)]));
+  }
+
+  return new Polygon([coordinates]);
+}
+
+function toRadians(value) {
+  return (value * Math.PI) / 180;
+}
+
+function toDegrees(value) {
+  return (value * 180) / Math.PI;
 }
 
 function renderSummary(data) {
