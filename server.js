@@ -501,6 +501,12 @@ const server = http.createServer((req, res) => {
   return readStatic(reqUrl.pathname, res);
 });
 
-server.listen(PORT, () => {
-  console.log(`Street Rentals running at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Street Rentals running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = {
+  rentalsApi
+};
